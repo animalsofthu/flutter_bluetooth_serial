@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.UUID;
 import java.util.Arrays;
 
+import android.os.ParcelUuid;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -59,9 +60,13 @@ public abstract class BluetoothConnection
         connectionThread = new ConnectionThread(socket);
         connectionThread.start();
     }
+
     /// Connects to given device by hardware address (default UUID used)
     public void connect(String address) throws IOException {
-        connect(address, DEFAULT_UUID);
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+        ParcelUuid[] uuids = (ParcelUuid[]) device.getUuids();
+        connect(address, uuids[0].getUuid());
     }
     
     /// Disconnects current session (ignore if not connected)
